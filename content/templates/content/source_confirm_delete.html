@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Remove Source | Tech Creator Studio</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 650px;
+            margin: 80px auto;
+            padding: 20px;
+            background: #f7f8fa;
+            color: #222;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        button {
+            background: #c62828;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .cancel {
+            margin-left: 15px;
+            color: #333;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Remove Source Link?</h1>
+
+        <p>
+            Are you sure you want to remove this source from
+            <strong>{{ item.title }}</strong>?
+        </p>
+
+        <p>
+            <strong>{{ object.title|default:object.url }}</strong>
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <button type="submit">Yes, Remove Source</button>
+
+            <a class="cancel"
+               href="{% url 'content:item_detail' item.pk %}">
+                Cancel
+            </a>
+        </form>
+    </div>
+
+</body>
+</html>

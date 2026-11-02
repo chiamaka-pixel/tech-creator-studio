@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Content Calendar | Tech Creator Studio</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1250px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f7f8fa;
+            color: #222;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 11px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            background: #222;
+            color: white;
+        }
+
+        .calendar-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        .calendar-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .month-title {
+            font-size: 22px;
+            margin: 0;
+        }
+
+        .navigation-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .navigation-links a {
+            padding: 8px 12px;
+            background: #f0f1f3;
+            color: #222;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(120px, 1fr));
+            min-width: 840px;
+        }
+
+        .weekday {
+            padding: 12px;
+            background: #f0f1f3;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+
+        .day-cell {
+            min-height: 145px;
+            padding: 9px;
+            border: 1px solid #eee;
+            background: white;
+            overflow-wrap: anywhere;
+        }
+
+        .outside-month {
+            background: #f8f8f8;
+            color: #aaa;
+        }
+
+        .today {
+            background: #f0f7ff;
+        }
+
+        .day-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .today .day-number {
+            color: #1769aa;
+        }
+
+        .calendar-item {
+            display: block;
+            background: #e3f2fd;
+            color: #14558a;
+            padding: 7px;
+            border-radius: 5px;
+            margin-bottom: 7px;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .calendar-item:hover {
+            background: #d0e7fa;
+        }
+
+        .calendar-item small {
+            display: block;
+            margin-top: 4px;
+        }
+
+        .note {
+            color: #777;
+            font-size: 14px;
+            margin-top: 18px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                margin: 15px auto;
+                padding: 12px;
+            }
+
+            .calendar-card {
+                padding: 12px;
+            }
+
+            .calendar-navigation {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <div>
+            <h1>Content Calendar</h1>
+            <p>Organise your content publishing schedule.</p>
+        </div>
+
+        <div class="actions">
+            <a class="button" href="{% url 'content:item_list' %}">
+                Dashboard
+            </a>
+
+            <a class="button" href="{% url 'content:item_create' %}">
+                + New Content
+            </a>
+        </div>
+    </div>
+
+    <div class="calendar-card">
+
+        <div class="calendar-navigation">
+            <h2 class="month-title">{{ month_label }}</h2>
+
+            <div class="navigation-links">
+
+                <a href="?year={{ previous_year }}&month={{ previous_month }}">
+                    Previous Month
+                </a>
+
+                <a href="{% url 'content:content_calendar' %}">
+                    Today
+                </a>
+
+                <a href="?year={{ next_year }}&month={{ next_month }}">
+                    Next Month
+                </a>
+
+            </div>
+        </div>
+
+        <div class="calendar-grid">
+
+            {% for weekday in weekdays %}
+                <div class="weekday">
+                    {{ weekday }}
+                </div>
+            {% endfor %}
+
+            {% for week in weeks %}
+                {% for day in week %}
+
+                    <div class="day-cell {% if not day.in_month %}outside-month{% endif %} {% if day.is_today %}today{% endif %}">
+
+                        <div class="day-number">
+                            {{ day.date.day }}
+                        </div>
+
+                        {% for item in day.items %}
+
+                            <a class="calendar-item"
+                               href="{% url 'content:item_detail' item.pk %}">
+
+                                {{ item.title }}
+
+                                <small>
+                                    {{ item.get_status_display }}
+                                </small>
+
+                            </a>
+
+                        {% empty %}
+
+                            <!-- No content scheduled on this date -->
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endfor %}
+            {% endfor %}
+
+        </div>
+
+        <p class="note">
+            Only content items with a planned date appear on the calendar.
+            Click a content title to view its details.
+        </p>
+
+    </div>
+
+</body>
+</html>

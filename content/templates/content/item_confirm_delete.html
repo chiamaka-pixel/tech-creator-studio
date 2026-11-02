@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Delete Content | Tech Creator Studio</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 650px;
+            margin: 80px auto;
+            padding: 20px;
+            background: #f7f8fa;
+            color: #222;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        button {
+            background: #c62828;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #a61f1f;
+        }
+
+        .cancel {
+            margin-left: 15px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .cancel:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Delete Content?</h1>
+
+        <p>
+            Are you sure you want to delete
+            <strong>{{ object.title }}</strong>?
+        </p>
+
+        <p>This action cannot be undone.</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <button type="submit">Yes, Delete</button>
+
+            <a class="cancel" href="{% url 'content:item_list' %}">
+                Cancel
+            </a>
+        </form>
+    </div>
+</body>
+</html>

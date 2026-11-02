@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Recycle Bin | Tech Creator Studio</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f7f8fa;
+            color: #222;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .button {
+            display: inline-block;
+            background: #222;
+            color: white;
+            padding: 11px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+        .info {
+            background: #fff3cd;
+            color: #664d03;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .empty-bin-form {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f0f1f3;
+        }
+
+        form {
+            display: inline;
+        }
+
+        button,
+        .permanent-delete {
+            border: none;
+            padding: 9px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .restore {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .permanent-delete,
+        .empty-bin-button {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .empty-bin-button {
+            padding: 11px 16px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <div>
+            <h1>Recycle Bin</h1>
+            <p>Manage your deleted content items.</p>
+        </div>
+
+        <a class="button" href="{% url 'content:item_list' %}">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <div class="info">
+        Deleted content stays here until you restore it or permanently delete it.
+    </div>
+
+    {% if items %}
+        <form
+            class="empty-bin-form"
+            method="post"
+            action="{% url 'content:empty_recycle_bin' %}"
+            onsubmit="return confirm('Are you sure you want to permanently delete ALL items in the Recycle Bin? This cannot be undone.');"
+        >
+            {% csrf_token %}
+
+            <button type="submit" class="empty-bin-button">
+                Empty Recycle Bin
+            </button>
+        </form>
+    {% endif %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Deleted On</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <td>{{ item.title }}</td>
+
+                    <td>
+                        {% if item.category %}
+                            {{ item.category.name }}
+                        {% else %}
+                            Uncategorized
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if item.deleted_at %}
+                            {{ item.deleted_at|date:"d M Y, h:i A" }}
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <form
+                            method="post"
+                            action="{% url 'content:item_restore' item.pk %}"
+                        >
+                            {% csrf_token %}
+
+                            <button type="submit" class="restore">
+                                Restore
+                            </button>
+                        </form>
+
+                        <a
+                            class="permanent-delete"
+                            href="{% url 'content:item_permanent_delete' item.pk %}"
+                        >
+                            Delete Permanently
+                        </a>
+                    </td>
+                </tr>
+
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="empty">
+                        Your Recycle Bin is empty.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>

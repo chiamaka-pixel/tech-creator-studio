@@ -1,116 +1,688 @@
+{% extends "content/base.html" %}
 
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>New Content | Tech Creator Studio</title>
+{% block title %}
+    {% if object %}Edit Content{% else %}Create Content{% endif %} | Tech Creator Studio
+{% endblock %}
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 850px;
-            margin: 40px auto;
-            padding: 0 20px;
-            background: #f7f8fa;
-            color: #222;
-        }
+{% block page_heading %}{% endblock %}
 
-        .form-container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-        }
+{% block extra_head %}
+<style>
+/* =========================================
+   CONTENT EDITOR — DISTINCT ATELIER LAYOUT
+========================================= */
 
-        h1 {
-            margin-bottom: 8px;
-        }
+.creator-editor {
+    --editor-ink: #000000;
+    --editor-muted: #454545;
+    --editor-paper: #FFFFFF;
+    --editor-border: #E5E3DD;
+    --editor-accent: #FF6500;
+    --editor-deep: #FF6500;
+    --editor-shadow: 0 25px 55px rgba(42, 39, 30, .13);
+    color: var(--editor-ink);
+    padding: 10px 0 45px;
+}
 
-        .subtitle {
-            color: #666;
-            margin-bottom: 25px;
-        }
+html[data-theme="dark"] .creator-editor {
+    --editor-ink: #FFFFFF;
+    --editor-muted: #B8B8B8;
+    --editor-paper: #0A0A0A;
+    --editor-border: #3A3A3A;
+    --editor-accent: #D8FF24;
+    --editor-deep: #000000;
+    --editor-shadow: 0 25px 55px rgba(0, 0, 0, .32);
+}
 
-        form p {
-            margin-bottom: 18px;
-        }
+/* Editor introduction */
 
-        form p label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 7px;
-        }
+.editor-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 30px;
+}
 
-        input, select, textarea {
-            box-sizing: border-box;
-            width: 100%;
-            padding: 11px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font: inherit;
-        }
+.editor-eyebrow {
+    color: var(--editor-accent);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
 
-        textarea {
-            resize: vertical;
-        }
+.editor-intro h1 {
+    font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+    font-size: clamp(30px, 4vw, 46px);
+    font-weight: 500;
+    letter-spacing: -1.8px;
+    line-height: 1.05;
+    margin: 0;
+    color: var(--editor-ink);
+}
 
-        button {
-            background: #222;
-            color: white;
-            padding: 12px 22px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 15px;
-        }
+.editor-intro p {
+    color: var(--editor-muted);
+    font-size: 14px;
+    margin: 10px 0 0;
+    max-width: 490px;
+    line-height: 1.7;
+}
 
-        button:hover {
-            background: #444;
-        }
+.editor-back {
+    color: var(--editor-muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
 
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #333;
-            text-decoration: none;
-        }
+.editor-back:hover {
+    color: var(--editor-accent);
+}
 
-        .errorlist {
-            color: #b00020;
-        }
-    </style>
-</head>
+/* Main workbench */
 
-<body>
+.editor-workbench {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 305px;
+    gap: 28px;
+    align-items: start;
+    perspective: 1400px;
+}
 
-    <a class="back-link" href="{% url 'content:item_list' %}">
-        &larr; Back to dashboard
-    </a>
+.editor-writing-area {
+    min-width: 0;
+}
 
-    <div class="form-container">
+/* Paper-like writing canvas */
 
-<h1>
-    {% if object %}
-        Edit Content
-    {% else %}
-        Create Content
-    {% endif %}
-</h1>
-        <p class="subtitle">
-            Add a new content idea or prepare a post for Facebook.
-        </p>
+.editor-paper {
+    position: relative;
+    isolation: isolate;
+    background: var(--editor-paper);
+    border: 1px solid var(--editor-border);
+    border-radius: 5px;
+    padding: clamp(22px, 4vw, 48px);
+    box-shadow:
+        0 2px 0 rgba(255,255,255,.8),
+        0 5px 0 rgba(125, 113, 90, .08),
+        0 12px 0 rgba(125, 113, 90, .045),
+        var(--editor-shadow);
+    transform: rotateX(1deg) rotateY(-.5deg);
+    transform-style: preserve-3d;
+}
 
-        <form method="post">
-            {% csrf_token %}
+html[data-theme="dark"] .editor-paper {
+    box-shadow:
+        0 2px 0 rgba(255,255,255,.025),
+        0 5px 0 rgba(0,0,0,.12),
+        0 12px 0 rgba(0,0,0,.15),
+        var(--editor-shadow);
+}
 
-            {{ form.as_p }}
+.paper-topline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--editor-border);
+    padding-bottom: 18px;
+    margin-bottom: 32px;
+}
 
-            <button type="submit">
-    {% if object %}Update Content{% else %}Save Content{% endif %}
-</button>
-        </form>
+.paper-topline span {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    color: var(--editor-muted);
+    text-transform: uppercase;
+}
 
-    </div>
+.paper-number {
+    color: var(--editor-accent) !important;
+}
 
-</body>
-</html>
+/* Writing fields */
+
+.editor-field {
+    margin-bottom: 30px;
+    min-width: 0;
+}
+
+.editor-field:last-child {
+    margin-bottom: 0;
+}
+
+.editor-field label {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--editor-ink);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .3px;
+}
+
+.editor-field textarea,
+.editor-field input,
+.editor-field select {
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+    background: transparent;
+    color: var(--editor-ink);
+    border: 1px solid var(--editor-border);
+    border-radius: 5px;
+    padding: 13px 15px;
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.editor-field textarea {
+    resize: vertical;
+    min-height: 115px;
+    line-height: 1.75;
+}
+
+.editor-field textarea[name="draft_text"] {
+    min-height: 330px;
+    font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.9;
+    padding: 23px;
+}
+
+.editor-field input[name="title"] {
+    font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+    font-size: clamp(21px, 3vw, 30px);
+    letter-spacing: -.7px;
+    padding: 16px 17px;
+}
+
+.editor-field textarea:focus,
+.editor-field input:focus,
+.editor-field select:focus {
+    border-color: var(--editor-accent);
+    box-shadow: 0 0 0 3px rgba(166, 109, 63, .12);
+}
+
+.editor-field input::placeholder,
+.editor-field textarea::placeholder {
+    color: var(--editor-muted);
+    opacity: .7;
+}
+
+.editor-field .helptext,
+.editor-field .help-text {
+    display: block;
+    color: var(--editor-muted);
+    font-size: 13px;
+    margin-top: 7px;
+}
+
+.editor-field ul.errorlist,
+.editor-paper ul.errorlist,
+.editor-rail ul.errorlist {
+    color: #D93025;
+    font-size: 12px;
+    padding-left: 18px;
+}
+
+/* Section dividers */
+
+.editor-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 38px 0 23px;
+}
+
+.editor-section-heading span {
+    color: var(--editor-accent);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.editor-section-heading::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: var(--editor-border);
+}
+
+/* Right publishing rail */
+
+.editor-rail {
+    position: sticky;
+    top: 24px;
+    background: var(--editor-deep);
+    color: #FFFFFF;
+    border-radius: 5px;
+    padding: 25px 22px;
+    box-shadow:
+        0 3px 0 rgba(0,0,0,.12),
+        0 8px 0 rgba(0,0,0,.08),
+        0 18px 35px rgba(0,0,0,.18);
+    transform: rotateY(-1.5deg) translateZ(12px);
+    transform-style: preserve-3d;
+}
+
+.rail-heading {
+    font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+    font-size: 23px;
+    font-weight: 500;
+    margin: 0 0 7px;
+}
+
+.rail-description {
+    color: #B8B8B8;
+    font-size: 12px;
+    line-height: 1.6;
+    margin: 0 0 25px;
+}
+
+.editor-rail .editor-field label {
+    color: #E7E4DC;
+    font-size: 13px;
+}
+
+.editor-rail .editor-field {
+    margin-bottom: 21px;
+}
+
+.editor-rail .editor-field input,
+.editor-rail .editor-field select,
+.editor-rail .editor-field textarea {
+    color: #FFFFFF;
+    background: rgba(255,255,255,.055);
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 4px;
+    font-size: 12px;
+    padding: 11px;
+}
+
+.editor-rail .editor-field option {
+    color: #111111;
+}
+
+.editor-rail .editor-field input:focus,
+.editor-rail .editor-field select:focus,
+.editor-rail .editor-field textarea:focus {
+    border-color: #D8FF24;
+    box-shadow: 0 0 0 3px rgba(215,164,119,.13);
+}
+
+.rail-divider {
+    height: 1px;
+    background: rgba(255,255,255,.15);
+    margin: 23px 0;
+}
+
+.rail-note {
+    color: #B8B8B8;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* Actions */
+
+.editor-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 25px;
+}
+
+.editor-save {
+    border: 0;
+    border-radius: 4px;
+    background: var(--editor-accent);
+    color: white;
+    padding: 13px 23px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .5px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #101010, 0 8px 15px rgba(0,0,0,.13);
+    transition: transform .2s, box-shadow .2s;
+}
+
+.editor-save:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 0 #101010, 0 12px 20px rgba(0,0,0,.16);
+}
+
+.editor-save:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #101010;
+}
+
+.editor-cancel {
+    color: var(--editor-muted);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 12px 15px;
+}
+
+.editor-cancel:hover {
+    color: var(--editor-accent);
+}
+
+@media (max-width: 950px) {
+    .editor-workbench {
+        grid-template-columns: 1fr;
+    }
+
+    .editor-rail {
+        position: relative;
+        top: auto;
+        transform: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .editor-intro {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .editor-paper {
+        padding: 22px 17px;
+        transform: none;
+    }
+
+    .editor-actions {
+        flex-wrap: wrap;
+    }
+}
+
+/* ==========================================
+   CREATE CONTENT - EDITOR EXPERIENCE UPDATE
+   ========================================== */
+
+/* Better field labels */
+.creator-editor .editor-field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+/* Consistent, comfortable input fields */
+.creator-editor .editor-field input,
+.creator-editor .editor-field textarea,
+.creator-editor .editor-field select {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 1.6;
+    border-radius: 7px;
+    padding: 14px 16px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+/* Writing areas */
+.creator-editor .editor-field textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+/* Main content writing space */
+.creator-editor textarea[name="draft_text"] {
+    min-height: 360px;
+    line-height: 1.85;
+    font-size: 16px;
+}
+
+/* Title field */
+.creator-editor input[name="title"] {
+    min-height: 65px;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+/* Placeholder readability */
+.creator-editor input::placeholder,
+.creator-editor textarea::placeholder {
+    opacity: .7;
+    font-size: 14px;
+}
+
+/* Publishing panel readability */
+.creator-editor .editor-rail .editor-field label {
+    font-size: 14px;
+    color: #FFFFFF;
+}
+
+.creator-editor .editor-rail .editor-field input,
+.creator-editor .editor-rail .editor-field textarea,
+.creator-editor .editor-rail .editor-field select {
+    font-size: 15px;
+    min-height: 46px;
+}
+
+/* Consistent section headings */
+.creator-editor .editor-section-heading {
+    margin-top: 42px;
+    margin-bottom: 25px;
+}
+
+/* Save button */
+.creator-editor .editor-save {
+    min-height: 48px;
+    padding: 14px 25px;
+    font-size: 14px;
+    background: #FF6500;
+    color: #FFFFFF;
+    border-radius: 6px;
+}
+
+/* Keyboard accessibility */
+.creator-editor .editor-field input:focus-visible,
+.creator-editor .editor-field textarea:focus-visible,
+.creator-editor .editor-field select:focus-visible,
+.creator-editor .editor-save:focus-visible {
+    outline: 2px solid #FF6500;
+    outline-offset: 3px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+    .creator-editor .editor-field label {
+        font-size: 14px;
+    }
+
+    .creator-editor input[name="title"] {
+        font-size: 21px;
+    }
+
+    .creator-editor textarea[name="draft_text"] {
+        min-height: 280px;
+    }
+
+    .creator-editor .editor-actions {
+        width: 100%;
+    }
+
+    .creator-editor .editor-save {
+        width: 100%;
+    }
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="creator-editor">
+
+    <header class="editor-intro">
+        <div>
+            <div class="editor-eyebrow">The Creator's Atelier / Workspace</div>
+
+            <h1>
+                {% if object %}
+                    Refine your story.
+                {% else %}
+                    Start with an idea.
+                {% endif %}
+            </h1>
+
+            <p>
+                Shape your research, develop your words and prepare
+                your content for publication.
+            </p>
+        </div>
+
+        <a href="{% url 'content:item_list' %}" class="editor-back">
+            ← Back to content library
+        </a>
+    </header>
+
+    <form method="post" class="editor-workbench">
+        {% csrf_token %}
+
+        {% for hidden_field in form.hidden_fields %}
+            {{ hidden_field }}
+        {% endfor %}
+
+        <div class="editor-writing-area">
+
+            <div class="editor-paper">
+
+                <div class="paper-topline">
+                    <span>Content manuscript</span>
+                    <span class="paper-number">TCS / EDITOR</span>
+                </div>
+
+                {% if form.non_field_errors %}
+                    {{ form.non_field_errors }}
+                {% endif %}
+
+                {% for field in form.visible_fields %}
+                    {% if field.name == "title" %}
+                        <div class="editor-field">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {{ field.errors }}
+                            {% if field.help_text %}
+                                <small class="helptext">{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <div class="editor-section-heading">
+                    <span>01 — Research and development</span>
+                </div>
+
+                {% for field in form.visible_fields %}
+                    {% if field.name == "research_notes" %}
+                        <div class="editor-field">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {{ field.errors }}
+                            {% if field.help_text %}
+                                <small class="helptext">{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <div class="editor-section-heading">
+                    <span>02 — The actual content</span>
+                </div>
+
+                {% for field in form.visible_fields %}
+                    {% if field.name == "draft_text" %}
+                        <div class="editor-field">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {{ field.errors }}
+                            {% if field.help_text %}
+                                <small class="helptext">{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <div class="editor-section-heading">
+                    <span>03 — Publishing copy</span>
+                </div>
+
+                {% for field in form.visible_fields %}
+                    {% if field.name == "caption" or field.name == "hashtags" or field.name == "production_notes" %}
+                        <div class="editor-field">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {{ field.errors }}
+                            {% if field.help_text %}
+                                <small class="helptext">{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+
+            <div class="editor-actions">
+                <button type="submit" class="editor-save">
+                    {% if object %}SAVE CHANGES{% else %}SAVE CONTENT{% endif %}
+                </button>
+
+                <a href="{% url 'content:item_list' %}" class="editor-cancel">
+                    Cancel
+                </a>
+            </div>
+
+        </div>
+
+        <aside class="editor-rail">
+
+            <h2 class="rail-heading">Publishing brief</h2>
+
+            <p class="rail-description">
+                These details organise your content and help you
+                plan when and where it will appear.
+            </p>
+
+            {% for field in form.visible_fields %}
+                {% if field.name == "category" or field.name == "audience" or field.name == "content_format" or field.name == "platform" or field.name == "planned_date" or field.name == "status" or field.name == "published_url" %}
+                    <div class="editor-field">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+
+                        {% if field.help_text %}
+                            <small class="helptext">{{ field.help_text }}</small>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div class="rail-divider"></div>
+
+            <div class="rail-note">
+                <strong>Atelier note</strong>
+                <p>
+                    Good content starts with a clear idea.
+                    Keep your research, draft and publishing details
+                    together so you can return to them whenever you need.
+                </p>
+            </div>
+
+        </aside>
+
+    </form>
+
+</div>
+
+{% endblock %}

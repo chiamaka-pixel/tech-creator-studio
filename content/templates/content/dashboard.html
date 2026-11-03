@@ -1,0 +1,25 @@
+{% extends "content/base.html" %}
+{% load static %}
+{% block title %}Dashboard | Tech Creator Studio{% endblock %}
+{% block page_heading %}{% endblock %}
+{% block content %}
+<section class="dash-welcome">
+  <div class="dash-copy"><div class="dash-greeting">WELCOME BACK, {{ request.user.first_name|default:request.user.username|upper }} 👋</div><h1 class="dash-title">Create. <span class="highlight">Plan.</span><br>Grow.</h1><p class="dash-subtitle">Your all-in-one studio for creating impactful content.</p><a class="button" href="{% url 'content:item_create' %}">Start creating <span>→</span></a></div>
+  <div class="dash-hero-art"><img src="{% static 'content/images/studio-workspace.svg' %}" alt="A creator studio desk with camera, laptop and ring light"></div>
+</section>
+<section class="dash-stats" aria-label="Content statistics">
+  <article class="dash-stat"><div class="dash-stat-top"><span class="stat-icon">▶</span><div><div class="stat-number">{{ total_content }}</div><div class="stat-label">Total Content</div></div><span class="stat-trend">↗</span></div></article>
+  <article class="dash-stat"><div class="dash-stat-top"><span class="stat-icon">◎</span><div><div class="stat-number">{{ total_reach }}</div><div class="stat-label">Total Reach</div></div><span class="stat-trend">↗</span></div></article>
+  <article class="dash-stat"><div class="dash-stat-top"><span class="stat-icon">▥</span><div><div class="stat-number">{{ total_engagement }}</div><div class="stat-label">Total Engagement</div></div><span class="stat-trend">↗</span></div></article>
+  <article class="dash-stat"><div class="dash-stat-top"><span class="stat-icon">▦</span><div><div class="stat-number">{{ scheduled_this_month }}</div><div class="stat-label">Scheduled This Month</div></div><span class="stat-trend">●</span></div></article>
+</section>
+<section class="dash-grid">
+  <article class="dash-panel overview-panel"><div class="dash-panel-head"><h2><span class="panel-icon">▥</span> Your Content Overview</h2><a href="{% url 'content:item_list' %}">View all →</a></div><div class="chart-legend"><span><i class="legend-dot"></i>New content · last 7 days</span></div><div class="activity-chart" role="img" aria-label="Content created during the last seven days">{% for day in activity_days %}<div class="chart-day"><div class="chart-bar" style="--bar-height:{{ day.height }}%" title="{{ day.count }} created"></div><small>{{ day.label }}</small></div>{% endfor %}</div></article>
+  <article class="dash-panel"><div class="dash-panel-head"><h2><span class="panel-icon" style="color:var(--lemon)">▦</span> Upcoming Schedule</h2><a href="{% url 'content:content_calendar' %}">View calendar →</a></div>{% for item in upcoming_items %}<div class="schedule-entry"><div class="schedule-thumb"><img src="{% static 'content/images/studio-workspace.svg' %}" alt=""></div><div class="schedule-copy"><strong>{{ item.title }}</strong><small>▦ {{ item.planned_date|date:"M j, Y" }}</small><span class="scheduled-pill">{{ item.get_status_display }}</span></div></div>{% empty %}<div class="empty-state">Nothing scheduled yet. Add a planned date to your content to see it here.</div>{% endfor %}</article>
+  <article class="dash-panel quick-panel"><div class="dash-panel-head"><h2><span class="panel-icon">ϟ</span> Quick Actions</h2></div><div class="quick-actions"><a class="quick-action primary" href="{% url 'content:item_create' %}"><span>＋</span> Create New Content</a><a class="quick-action" href="{% url 'content:performance_dashboard' %}"><span>↗</span> View Performance</a><a class="quick-action" href="{% url 'content:content_calendar' %}"><span>▦</span> Open Calendar</a></div></article>
+</section>
+<section class="bottom-grid">
+  <article class="promo-card"><div class="promo-card-copy"><h2>Level Up Your<br>Content Creation</h2><p>Keep your ideas moving and make every post count.</p><a class="lemon-link" href="{% url 'content:item_create' %}">Explore your workspace →</a></div></article>
+  <article class="dash-panel"><div class="dash-panel-head"><h2><span class="panel-icon" style="color:var(--lemon)">⌁</span> Recent Activity</h2><a href="{% url 'content:item_list' %}">View all →</a></div><div class="recent-list">{% for item in recent_items %}<div class="recent-row"><span class="recent-badge">{% if item.status == 'published' %}✓{% else %}✎{% endif %}</span><div><strong>{{ item.title }}</strong><small>{{ item.get_status_display }} · Updated {{ item.updated_at|timesince }} ago</small></div></div>{% empty %}<div class="empty-state">Your recent content activity will appear here.</div>{% endfor %}</div></article>
+</section>
+{% endblock %}

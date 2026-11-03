@@ -1,108 +1,275 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "content/base.html" %}
 
-    <title>Manage Source | Tech Creator Studio</title>
+{% block title %}{% if object %}Edit Source{% else %}Add Source{% endif %} | Tech Creator Studio{% endblock %}
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 700px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #f7f8fa;
-            color: #222;
-        }
+{% block page_heading %}{% endblock %}
 
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-        }
+{% block extra_head %}
+<style>
+.source-editor {
+    --s-ink: #000000;
+    --s-muted: #454545;
+    --s-paper: #FFFFFF;
+    --s-line: #E5E3DD;
+    --s-accent: #FF6500;
+    --s-dark: #FF6500;
+    color: var(--s-ink);
+    padding: 12px 0 45px;
+}
+html[data-theme="dark"] .source-editor {
+    --s-ink: #FFFFFF;
+    --s-muted: #D4D4D4;
+    --s-paper: #0A0A0A;
+    --s-line: #3A3A3A;
+    --s-accent: #D8FF24;
+    --s-dark: #000000;
+}
+.source-back {
+    display: inline-block;
+    margin-bottom: 25px;
+    color: var(--s-muted);
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+}
+.source-back:hover { color: var(--s-accent); }
+.source-heading { margin-bottom: 28px; }
+.source-kicker {
+    color: var(--s-accent);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+.source-heading h1 {
+    margin: 0;
+    font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+    font-size: clamp(32px, 4vw, 46px);
+    font-weight: 500;
+    letter-spacing: -1.5px;
+}
+.source-heading p {
+    max-width: 520px;
+    color: var(--s-muted);
+    font-size: 13px;
+    line-height: 1.7;
+    margin-top: 10px;
+}
+.source-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 270px;
+    gap: 23px;
+    align-items: start;
+    perspective: 1100px;
+}
+.source-form-paper {
+    min-width: 0;
+    padding: clamp(23px, 4vw, 40px);
+    background: var(--s-paper);
+    border: 1px solid var(--s-line);
+    border-radius: 4px;
+    box-shadow: 0 3px 0 rgba(0,0,0,.08),
+                0 8px 0 rgba(0,0,0,.04),
+                0 20px 36px rgba(0,0,0,.09);
+    transform: rotateX(.4deg);
+}
+.source-paper-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 16px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--s-line);
+    color: var(--s-muted);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+}
+.source-paper-top span:last-child { color: var(--s-accent); }
+.source-field { margin-bottom: 23px; }
+.source-field:last-child { margin-bottom: 0; }
+.source-field label {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--s-ink);
+    font-size: 13px;
+    font-weight: 800;
+}
+.source-field input,
+.source-field select,
+.source-field textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid var(--s-line);
+    border-radius: 3px;
+    background: transparent;
+    color: var(--s-ink);
+    font: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+}
+.source-field textarea {
+    min-height: 125px;
+    resize: vertical;
+    line-height: 1.7;
+}
+.source-field input:focus,
+.source-field select:focus,
+.source-field textarea:focus {
+    border-color: var(--s-accent);
+    box-shadow: 0 0 0 3px rgba(255,101,0,.12);
+}
+.source-field .helptext {
+    display: block;
+    margin-top: 7px;
+    color: var(--s-muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+.source-field .errorlist,
+.source-form-errors {
+    color: #D93025;
+    font-size: 13px;
+    padding-left: 17px;
+}
+.source-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 27px;
+}
+.source-save {
+    border: 0;
+    border-radius: 3px;
+    padding: 14px 21px;
+    background: var(--s-accent);
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .6px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #101010, 0 9px 16px rgba(0,0,0,.12);
+    transition: transform .2s;
+}
+.source-save:hover { transform: translateY(-3px); }
+.source-cancel {
+    color: var(--s-muted);
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    padding: 12px;
+}
+.source-cancel:hover { color: var(--s-accent); }
+.source-note {
+    padding: 23px 21px;
+    background: var(--s-dark);
+    color: #FFFFFF;
+    border-radius: 4px;
+    box-shadow: 0 4px 0 rgba(0,0,0,.13),
+                0 9px 0 rgba(0,0,0,.07),
+                0 19px 30px rgba(0,0,0,.15);
+    transform: rotateY(-1deg) translateZ(8px);
+}
+.source-note h2 {
+    margin: 0 0 10px;
+    font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+}
+.source-note p {
+    color: #B8B8B8;
+    font-size: 13px;
+    line-height: 1.75;
+}
+.source-tip {
+    margin-top: 19px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,.15);
+}
+.source-tip strong {
+    display: block;
+    color: #FF8A38;
+    font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 7px;
+}
+.source-tip span {
+    color: #B8B8B8;
+    font-size: 12px;
+    line-height: 1.7;
+}
+@media (max-width: 850px) {
+    .source-layout { grid-template-columns: 1fr; }
+    .source-note { transform: none; }
+}
+@media (max-width: 550px) {
+    .source-form-paper { padding: 22px 16px; transform: none; }
+    .source-actions { flex-wrap: wrap; }
+}
+</style>
+{% endblock %}
 
-        h1 {
-            margin-top: 0;
-        }
+{% block content %}
+<div class="source-editor">
 
-        form p {
-            margin-bottom: 18px;
-        }
+    <a href="{% url 'content:item_detail' item.pk %}" class="source-back">← BACK TO CONTENT</a>
 
-        input, textarea {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 11px;
-            margin-top: 7px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-family: Arial, sans-serif;
-        }
+    <header class="source-heading">
+        <div class="source-kicker">Creator's Atelier / Research Library</div>
+        <h1>{% if object %}Refine a reference.{% else %}Add a source.{% endif %}</h1>
+        <p>Keep the websites, articles and research materials behind your content organised in one place.</p>
+    </header>
 
-        textarea {
-            min-height: 110px;
-        }
+    <form method="post" class="source-layout">
+        {% csrf_token %}
+        {% for hidden_field in form.hidden_fields %}{{ hidden_field }}{% endfor %}
 
-        button {
-            background: #222;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .cancel {
-            margin-left: 15px;
-            color: #333;
-            text-decoration: none;
-        }
-
-        .errors {
-            color: #c62828;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="container">
-        <h1>
-            {% if object %}
-                Edit Source Link
-            {% else %}
-                Add Source Link
-            {% endif %}
-        </h1>
-
-        <p>Content item: <strong>{{ item.title }}</strong></p>
-
-        <form method="post">
-            {% csrf_token %}
+        <main class="source-form-paper">
+            <div class="source-paper-top">
+                <span>Research reference record</span>
+                <span>TCS / SOURCE</span>
+            </div>
 
             {% if form.non_field_errors %}
-                <div class="errors">
-                    {{ form.non_field_errors }}
-                </div>
+                <div class="source-form-errors">{{ form.non_field_errors }}</div>
             {% endif %}
 
-            {{ form.as_p }}
+            {% for field in form.visible_fields %}
+                <div class="source-field">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {{ field.errors }}
+                    {% if field.help_text %}<small class="helptext">{{ field.help_text }}</small>{% endif %}
+                </div>
+            {% endfor %}
 
-            <button type="submit">
-                {% if object %}
-                    Save Changes
-                {% else %}
-                    Add Source
-                {% endif %}
-            </button>
+            <div class="source-actions">
+                <button type="submit" class="source-save">
+                    {% if object %}SAVE SOURCE CHANGES{% else %}ADD RESEARCH SOURCE{% endif %}
+                </button>
+                <a href="{% url 'content:item_detail' item.pk %}" class="source-cancel">Cancel</a>
+            </div>
+        </main>
 
-            <a class="cancel"
-               href="{% url 'content:item_detail' item.pk %}">
-                Cancel
-            </a>
-        </form>
-    </div>
+        <aside class="source-note">
+            <h2>Build your evidence trail.</h2>
+            <p>Store the original page where you found an idea, statistic, quotation or useful piece of information.</p>
+            <div class="source-tip">
+                <strong>Keep it traceable</strong>
+                <span>Give each source a recognisable title and use its original web address where possible.</span>
+            </div>
+            <div class="source-tip">
+                <strong>Keep it relevant</strong>
+                <span>Attach sources to the content they helped you research so you can find them again.</span>
+            </div>
+        </aside>
+    </form>
 
-</body>
-</html>
+</div>
+{% endblock %}

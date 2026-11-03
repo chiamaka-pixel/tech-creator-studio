@@ -1,69 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "content/base.html" %}
 
-    <title>Remove Source | Tech Creator Studio</title>
+{% block title %}Remove Research Source | Tech Creator Studio{% endblock %}
+{% block page_heading %}{% endblock %}
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 650px;
-            margin: 80px auto;
-            padding: 20px;
-            background: #f7f8fa;
-            color: #222;
-        }
+{% block extra_head %}
+<style>
+.source-remove { --sd-ink:#000000; --sd-muted:#454545; --sd-paper:#FFFFFF; --sd-line:#E5E3DD; --sd-danger:#D93025; color:var(--sd-ink); max-width:790px; margin:25px auto 55px; }
+html[data-theme="dark"] .source-remove { --sd-ink:#FFFFFF; --sd-muted:#D4D4D4; --sd-paper:#0A0A0A; --sd-line:#3A3A3A; --sd-danger:#F28B82; }
+.source-remove-paper { padding:clamp(25px,5vw,46px); background:var(--sd-paper); border:1px solid var(--sd-line); border-radius:4px; box-shadow:0 4px 0 rgba(0,0,0,.07),0 12px 0 rgba(0,0,0,.04),0 25px 42px rgba(0,0,0,.1); }
+.source-remove-kicker { color:var(--sd-danger); font-size:12px; font-weight:800; letter-spacing:2px; text-transform:uppercase; }
+.source-remove h1 { margin:13px 0; font:500 clamp(30px,4vw,42px)/1.1 "Manrope","Segoe UI",Arial,sans-serif; letter-spacing:-1px; }
+.source-remove p { color:var(--sd-muted); font-size:13px; line-height:1.8; }
+.source-remove-preview { padding:20px; margin:24px 0; border:1px solid var(--sd-line); border-left:4px solid var(--sd-danger); background:rgba(169,79,69,.045); }
+.source-remove-preview span { display:block; margin-bottom:8px; color:var(--sd-muted); font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; }
+.source-remove-preview strong { display:block; color:var(--sd-ink); font:500 20px "Manrope","Segoe UI",Arial,sans-serif; overflow-wrap:anywhere; }
+.source-remove-preview a { display:inline-block; margin-top:8px; color:var(--sd-danger); font-size:13px; overflow-wrap:anywhere; }
+.source-remove-actions { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-top:25px; }
+.source-remove-button { padding:13px 19px; border:0; border-radius:3px; background:var(--sd-danger); color:white; font-size:12px; font-weight:800; letter-spacing:.5px; cursor:pointer; box-shadow:0 4px 0 rgba(100,35,30,.3); }
+.source-remove-cancel { padding:12px; color:var(--sd-muted); font-size:13px; font-weight:800; text-decoration:none; }
+.source-remove-cancel:hover { color:var(--sd-ink); }
+</style>
+{% endblock %}
 
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-        }
+{% block content %}
+<div class="source-remove">
+    <section class="source-remove-paper">
+        <div class="source-remove-kicker">Research library / Removal request</div>
+        <h1>Remove this source?</h1>
+        <p>You are about to remove this research reference from <strong>{{ item.title }}</strong>. The content itself will remain in your library.</p>
 
-        button {
-            background: #c62828;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .cancel {
-            margin-left: 15px;
-            color: #333;
-            text-decoration: none;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="container">
-        <h1>Remove Source Link?</h1>
-
-        <p>
-            Are you sure you want to remove this source from
-            <strong>{{ item.title }}</strong>?
-        </p>
-
-        <p>
+        <div class="source-remove-preview">
+            <span>Source selected for removal</span>
             <strong>{{ object.title|default:object.url }}</strong>
-        </p>
+            {% if object.url %}<a href="{{ object.url }}" target="_blank" rel="noopener noreferrer">{{ object.url }}</a>{% endif %}
+        </div>
 
         <form method="post">
             {% csrf_token %}
-
-            <button type="submit">Yes, Remove Source</button>
-
-            <a class="cancel"
-               href="{% url 'content:item_detail' item.pk %}">
-                Cancel
-            </a>
+            <div class="source-remove-actions">
+                <button type="submit" class="source-remove-button">YES, REMOVE SOURCE</button>
+                <a href="{% url 'content:item_detail' item.pk %}" class="source-remove-cancel">Cancel and return</a>
+            </div>
         </form>
-    </div>
-
-</body>
-</html>
+    </section>
+</div>
+{% endblock %}

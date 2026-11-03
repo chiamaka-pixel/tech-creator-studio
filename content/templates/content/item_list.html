@@ -1,214 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard | Tech Creator Studio</title>
+{% extends "content/base.html" %}
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1100px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #f7f8fa;
-            color: #222;
-        }
+{% block title %}Content Library | Tech Creator Studio{% endblock %}
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
 
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+{% block breadcrumb %}Content library{% endblock %}
 
-        .button {
-            display: inline-block;
-            background: #222;
-            color: white;
-            padding: 11px 16px;
-            border-radius: 6px;
-            text-decoration: none;
-        }
+{% block eyebrow %}YOUR CREATIVE WORKSPACE{% endblock %}
 
-        .calendar-button {
-            background: #1769aa;
-        }
+{% block heading %}Your content library{% endblock %}
 
-        .performance-button {
-            background: #198754;
-        }
+{% block subtitle %}
+    Keep your ideas, research, drafts and publishing plans organised.
+{% endblock %}
 
-        .recycle-button {
-            background: #555;
-        }
+{% block page_actions %}
+    <a class="button" href="{% url 'content:item_create' %}">
+        + New content
+    </a>
+{% endblock %}
 
-        .filters {
-            background: white;
-            padding: 18px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
 
-        select,
-        .filter-button {
-            padding: 9px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+{% block content %}
 
-        .filter-button {
-            background: #222;
-            color: white;
-            cursor: pointer;
-        }
+<section class="toolbar">
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
+    <form method="get" class="filter-form">
 
-        th,
-        td {
-            padding: 14px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
+        <label for="status">View by status</label>
 
-        th {
-            background: #f0f1f3;
-        }
+        <select name="status" id="status">
+            <option value="">All statuses</option>
 
-        .title-link {
-            color: #222;
-            font-weight: bold;
-            text-decoration: none;
-        }
+            {% for value, label in statuses %}
+                <option value="{{ value }}"
+                    {% if current_status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
 
-        .title-link:hover {
-            color: #1769aa;
-            text-decoration: underline;
-        }
+        <button class="button button-secondary" type="submit">
+            Apply filter
+        </button>
 
-        .edit {
-            color: #1769aa;
-            text-decoration: none;
-            margin-right: 10px;
-        }
-
-        .delete {
-            color: #c62828;
-            text-decoration: none;
-        }
-
-        .edit:hover,
-        .delete:hover {
-            text-decoration: underline;
-        }
-
-        .empty {
-            text-align: center;
-            padding: 30px;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-        }
-
-    </style>
-</head>
-
-<body>
-
-    <div class="header">
-
-        <div>
-            <h1>Tech Creator Studio</h1>
-            <p>Manage your content ideas, drafts and publishing schedule.</p>
-        </div>
-
-        <div class="header-actions">
-
-            <a class="button calendar-button"
-               href="{% url 'content:content_calendar' %}">
-                Content Calendar
+        {% if current_status %}
+            <a class="text-link"
+               href="{% url 'content:item_list' %}">
+                Clear filter
             </a>
+        {% endif %}
 
-            <a class="button performance-button"
-               href="{% url 'content:performance_dashboard' %}">
-                Performance Dashboard
-            </a>
+    </form>
 
-            <a class="button recycle-button"
-               href="{% url 'content:recycle_bin' %}">
-                Recycle Bin
-            </a>
+</section>
 
-            <a class="button"
-               href="{% url 'content:item_create' %}">
-                + New Content Item
-            </a>
 
-        </div>
+<section class="panel">
 
+    <div class="panel-heading">
+        <h2>Your content library</h2>
     </div>
 
-
-    <!-- Content Filters -->
-    <div class="filters">
-
-        <form method="get">
-
-            <label for="status">Filter by status:</label>
-
-            <select name="status" id="status">
-
-                <option value="">All statuses</option>
-
-                {% for value, label in statuses %}
-
-                    <option value="{{ value }}"
-                        {% if current_status == value %}selected{% endif %}>
-                        {{ label }}
-                    </option>
-
-                {% endfor %}
-
-            </select>
-
-            <button class="filter-button" type="submit">
-                Apply Filter
-            </button>
-
-            <a href="{% url 'content:item_list' %}">
-                Clear Filter
-            </a>
-
-        </form>
-
-    </div>
-
-
-    <!-- Content Table -->
     <div class="table-wrapper">
 
-        <table>
+        <table class="data-table">
 
             <thead>
                 <tr>
-                    <th>Title</th>
+                    <th>Content title</th>
                     <th>Category</th>
                     <th>Status</th>
-                    <th>Planned Date</th>
+                    <th>Planned date</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -220,7 +82,7 @@
                     <tr>
 
                         <td>
-                            <a class="title-link"
+                            <a class="content-title-link"
                                href="{% url 'content:item_detail' item.pk %}">
                                 {{ item.title }}
                             </a>
@@ -230,32 +92,36 @@
                             {% if item.category %}
                                 {{ item.category.name }}
                             {% else %}
-                                Uncategorized
+                                <span class="muted">Uncategorized</span>
                             {% endif %}
                         </td>
 
-                        <td>{{ item.get_status_display }}</td>
+                        <td>
+                            <span class="status-label">
+                                {{ item.get_status_display }}
+                            </span>
+                        </td>
 
                         <td>
                             {% if item.planned_date %}
-                                {{ item.planned_date }}
+                                {{ item.planned_date|date:"d M Y" }}
                             {% else %}
-                                Not scheduled
+                                <span class="muted">Not scheduled</span>
                             {% endif %}
                         </td>
 
                         <td>
-
-                            <a class="edit"
+                            <a class="text-link"
                                href="{% url 'content:item_edit' item.pk %}">
                                 Edit
                             </a>
 
-                            <a class="delete"
+                            <span> · </span>
+
+                            <a class="text-link text-link-danger"
                                href="{% url 'content:item_delete' item.pk %}">
                                 Delete
                             </a>
-
                         </td>
 
                     </tr>
@@ -263,8 +129,18 @@
                 {% empty %}
 
                     <tr>
-                        <td colspan="5" class="empty">
-                            No content items found.
+                        <td colspan="5" class="empty-state">
+                            <strong>No content items found.</strong>
+
+                            <p>
+                                Your content library is waiting for
+                                its first entry.
+                            </p>
+
+                            <a class="button"
+                               href="{% url 'content:item_create' %}">
+                                Create your first content item
+                            </a>
                         </td>
                     </tr>
 
@@ -276,5 +152,6 @@
 
     </div>
 
-</body>
-</html>
+</section>
+
+{% endblock %}

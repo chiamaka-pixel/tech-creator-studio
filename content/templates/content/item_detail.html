@@ -1,410 +1,170 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "content/base.html" %}
 
-    <title>{{ item.title }} | Tech Creator Studio</title>
+{% block title %}{{ item.title }} | Tech Creator Studio{% endblock %}
+{% block page_heading %}{% endblock %}
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #f7f8fa;
-            color: #222;
-        }
+{% block extra_head %}
+<style>
+.review-desk { --v-ink:#000000; --v-muted:#454545; --v-paper:#FFFFFF; --v-line:#E5E3DD; --v-accent:#FF6500; --v-panel:#FF6500; color:var(--v-ink); padding:10px 0 45px; }
+html[data-theme="dark"] .review-desk { --v-ink:#FFFFFF; --v-muted:#D4D4D4; --v-paper:#0A0A0A; --v-line:#3A3A3A; --v-accent:#D8FF24; --v-panel:#000000; }
+.review-topline { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:24px; }
+.review-back { color:var(--v-muted); font-size:13px; font-weight:800; text-decoration:none; }
+.review-back:hover { color:var(--v-accent); }
+.review-kicker { color:var(--v-accent); font-size:12px; font-weight:800; letter-spacing:2px; text-transform:uppercase; }
+.review-heading { padding:8px 0 27px; border-bottom:1px solid var(--v-line); margin-bottom:27px; }
+.review-heading h1 { max-width:900px; margin:12px 0 17px; color:var(--v-ink); font:500 clamp(32px,5vw,54px)/1.08 "Manrope","Segoe UI",Arial,sans-serif; letter-spacing:-1.8px; overflow-wrap:anywhere; }
+.review-meta { display:flex; flex-wrap:wrap; gap:9px 20px; color:var(--v-muted); font-size:13px; }
+.review-meta strong { color:var(--v-ink); }
+.review-layout { display:grid; grid-template-columns:minmax(0,1fr) 275px; gap:25px; align-items:start; perspective:1200px; }
+.review-main { min-width:0; }
+.review-paper { padding:clamp(22px,4vw,40px); background:var(--v-paper); border:1px solid var(--v-line); border-radius:4px; box-shadow:0 3px 0 rgba(0,0,0,.07),0 9px 0 rgba(0,0,0,.04),0 22px 38px rgba(0,0,0,.09); transform:rotateX(.4deg); }
+html[data-theme="dark"] .review-paper { box-shadow:0 3px 0 rgba(0,0,0,.12),0 9px 0 rgba(0,0,0,.12),0 22px 38px rgba(0,0,0,.22); }
+.paper-label { display:flex; justify-content:space-between; gap:10px; padding-bottom:15px; margin-bottom:28px; border-bottom:1px solid var(--v-line); color:var(--v-muted); font-size:12px; font-weight:800; letter-spacing:1.4px; text-transform:uppercase; }
+.paper-label span:last-child { color:var(--v-accent); }
+.review-section { margin-bottom:33px; }
+.review-section:last-child { margin-bottom:0; }
+.review-section h2 { display:flex; gap:12px; align-items:center; margin:0 0 15px; color:var(--v-ink); font:500 22px "Manrope","Segoe UI",Arial,sans-serif; }
+.review-section h2 span { color:var(--v-accent); font:800 9px Arial,sans-serif; letter-spacing:1px; }
+.review-copy { color:var(--v-muted); font-size:13px; line-height:1.9; overflow-wrap:anywhere; }
+.review-copy.draft { color:var(--v-ink); font:16px/1.95 "Manrope","Segoe UI",Arial,sans-serif; }
+.review-copy.empty { font-style:italic; opacity:.7; }
+.caption-sheet { padding:20px; border-left:3px solid var(--v-accent); background:rgba(255,101,0,.07); color:var(--v-ink); font-size:13px; line-height:1.8; overflow-wrap:anywhere; }
+.hashtag-line { margin-top:13px; color:var(--v-accent); font-size:12px; line-height:1.8; overflow-wrap:anywhere; }
+.review-rail { position:sticky; top:22px; padding:23px 20px; background:var(--v-panel); color:#FFFFFF; border-radius:4px; box-shadow:0 4px 0 rgba(0,0,0,.13),0 9px 0 rgba(0,0,0,.07),0 19px 31px rgba(0,0,0,.15); transform:rotateY(-1deg) translateZ(8px); }
+.review-rail h2 { margin:0 0 18px; font:500 23px "Manrope","Segoe UI",Arial,sans-serif; }
+.rail-item { padding:11px 0; border-bottom:1px solid rgba(255,255,255,.13); }
+.rail-label { display:block; color:#B8B8B8; margin-bottom:6px; font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; }
+.rail-value { color:#FFFFFF; font-size:12px; line-height:1.6; overflow-wrap:anywhere; }
+.rail-value a { color:#FF8A38; text-decoration:none; }
+.rail-actions { display:grid; gap:9px; margin-top:22px; }
+.rail-button { display:block; padding:12px 10px; border-radius:3px; text-align:center; text-decoration:none; font-size:12px; font-weight:800; letter-spacing:.5px; transition:transform .2s; }
+.rail-button:hover { transform:translateY(-2px); }
+.rail-button.primary { color:#000000; background:#D8FF24; box-shadow:0 4px 0 #101010; }
+.rail-button.secondary { color:#FFFFFF; border:1px solid rgba(255,255,255,.25); }
+.review-section-card { margin-top:24px; padding:24px; background:var(--v-paper); border:1px solid var(--v-line); box-shadow:0 8px 22px rgba(0,0,0,.06); }
+.review-section-card h2 { margin:0 0 17px; color:var(--v-ink); font:500 23px "Manrope","Segoe UI",Arial,sans-serif; }
+.source-row { padding:13px 0; border-bottom:1px solid var(--v-line); }
+.source-row:last-child { border-bottom:0; }
+.source-row-main { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+.source-row a { color:var(--v-accent); font-size:12px; font-weight:700; text-decoration:none; overflow-wrap:anywhere; }
+.source-row a:hover { text-decoration:underline; }
+.source-meta { display:block; margin-top:5px; color:var(--v-muted); font-size:12px; line-height:1.6; }
+.source-actions { display:flex; flex-shrink:0; gap:10px; }
+.source-actions a { color:var(--v-muted); font-size:12px; }
+.source-add { display:inline-block; margin-top:16px; color:var(--v-accent); font-size:13px; font-weight:800; text-decoration:none; }
+.performance-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.performance-stat { padding:14px 12px; background:var(--v-paper); border:1px solid var(--v-line); box-shadow:0 3px 0 rgba(100,90,70,.05); }
+.performance-stat span { display:block; color:var(--v-muted); font-size: 12px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; }
+.performance-stat strong { display:block; margin-top:8px; color:var(--v-ink); font:500 22px "Manrope","Segoe UI",Arial,sans-serif; overflow-wrap:anywhere; }
+.performance-notes { margin-top:15px; color:var(--v-muted); font-size:13px; line-height:1.7; }
+.review-empty { color:var(--v-muted); font-size:12px; line-height:1.7; }
+@media(max-width:900px) { .review-layout { grid-template-columns:1fr; } .review-rail { position:relative; top:auto; transform:none; } }
+@media(max-width:600px) { .review-topline { align-items:flex-start; flex-direction:column; } .review-paper { padding:22px 16px; transform:none; } .review-section-card { padding:18px 14px; } .source-row-main { flex-direction:column; } .performance-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+</style>
+{% endblock %}
 
-        .header,
-        .actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .header {
-            margin-bottom: 25px;
-        }
-
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .section {
-            margin-bottom: 22px;
-        }
-
-        .section h3 {
-            margin-bottom: 8px;
-        }
-
-        .content {
-            line-height: 1.7;
-            overflow-wrap: anywhere;
-        }
-
-        .metadata,
-        .performance-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 18px;
-        }
-
-        .metadata p,
-        .performance-grid p {
-            margin: 5px 0;
-        }
-
-        .performance-number {
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 10px 15px;
-            border-radius: 6px;
-            text-decoration: none;
-            background: #222;
-            color: white;
-        }
-
-        .edit {
-            background: #1769aa;
-        }
-
-        .add-source {
-            background: #198754;
-            margin-bottom: 15px;
-        }
-
-        .performance-button {
-            background: #1769aa;
-        }
-
-        .source-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-        }
-
-        .source-actions a {
-            text-decoration: none;
-        }
-
-        .source {
-            border-bottom: 1px solid #eee;
-            padding: 15px 0;
-        }
-
-        .source:last-child {
-            border-bottom: none;
-        }
-
-        .muted {
-            color: #777;
-        }
-
-        .remove {
-            color: #c62828;
-        }
-
-        @media (max-width: 600px) {
-            .header {
-                align-items: flex-start;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-    <!-- Page Header -->
-    <div class="header">
-        <div>
-            <h1>{{ item.title }}</h1>
-            <p class="muted">Content details</p>
-        </div>
-
-        <div class="actions">
-            <a class="button" href="{% url 'content:item_list' %}">
-                Dashboard
-            </a>
-
-            <a class="button edit"
-               href="{% url 'content:item_edit' item.pk %}">
-                Edit Content
-            </a>
-        </div>
+{% block content %}
+<div class="review-desk">
+    <div class="review-topline">
+        <a href="{% url 'content:item_list' %}" class="review-back">← RETURN TO CONTENT LIBRARY</a>
+        <span class="review-kicker">Creator's Atelier / Review Desk</span>
     </div>
 
-
-    <!-- Content Information -->
-    <div class="card">
-        <h2>Content Information</h2>
-
-        <div class="metadata">
-            <div>
-                <strong>Category</strong>
-                <p>{{ item.category|default:"Uncategorized" }}</p>
-            </div>
-
-            <div>
-                <strong>Status</strong>
-                <p>{{ item.get_status_display }}</p>
-            </div>
-
-            <div>
-                <strong>Format</strong>
-                <p>{{ item.get_content_format_display }}</p>
-            </div>
-
-            <div>
-                <strong>Platform</strong>
-                <p>{{ item.get_platform_display }}</p>
-            </div>
-
-            <div>
-                <strong>Target Audience</strong>
-                <p>{{ item.audience|default:"Not specified" }}</p>
-            </div>
-
-            <div>
-                <strong>Planned Date</strong>
-                <p>{{ item.planned_date|default:"Not scheduled" }}</p>
-            </div>
+    <header class="review-heading">
+        <div class="review-kicker">Content manuscript</div>
+        <h1>{{ item.title }}</h1>
+        <div class="review-meta">
+            <span><strong>{{ item.get_status_display }}</strong></span>
+            <span>{{ item.get_content_format_display }}</span>
+            <span>{{ item.get_platform_display }}</span>
+            <span>Created {{ item.created_at|date:"M j, Y" }}</span>
         </div>
-    </div>
+    </header>
 
+    <div class="review-layout">
+        <main class="review-main">
+            <article class="review-paper">
+                <div class="paper-label"><span>Editorial copy</span><span>Document / 01</span></div>
 
-    <!-- Research and Content -->
-    <div class="card">
-        <h2>Research Notes</h2>
+                <section class="review-section">
+                    <h2><span>01</span> Research notes</h2>
+                    {% if item.research_notes %}<div class="review-copy">{{ item.research_notes|linebreaks }}</div>{% else %}<p class="review-copy empty">Research notes have not been added yet.</p>{% endif %}
+                </section>
 
-        <div class="content">
-            {% if item.research_notes %}
-                {{ item.research_notes|linebreaks }}
-            {% else %}
-                <p class="muted">No research notes added yet.</p>
-            {% endif %}
-        </div>
+                <section class="review-section">
+                    <h2><span>02</span> Content draft</h2>
+                    {% if item.draft_text %}<div class="review-copy draft">{{ item.draft_text|linebreaks }}</div>{% else %}<p class="review-copy empty">The content draft is still empty.</p>{% endif %}
+                </section>
 
-        <div class="section">
-            <h3>Draft Text</h3>
+                <section class="review-section">
+                    <h2><span>03</span> Publishing caption</h2>
+                    {% if item.caption %}<div class="caption-sheet">{{ item.caption|linebreaks }}</div>{% else %}<p class="review-copy empty">No caption has been written yet.</p>{% endif %}
+                    {% if item.hashtags %}<div class="hashtag-line">{{ item.hashtags }}</div>{% endif %}
+                </section>
 
-            <div class="content">
-                {% if item.draft_text %}
-                    {{ item.draft_text|linebreaks }}
+                <section class="review-section">
+                    <h2><span>04</span> Production notes</h2>
+                    {% if item.production_notes %}<div class="review-copy">{{ item.production_notes|linebreaks }}</div>{% else %}<p class="review-copy empty">No production notes have been added.</p>{% endif %}
+                </section>
+            </article>
+
+            <section class="review-section-card">
+                <h2>Research library</h2>
+                {% for source in item.sources.all %}
+                    <div class="source-row">
+                        <div class="source-row-main">
+                            <div>
+                                <a href="{{ source.url }}" target="_blank" rel="noopener noreferrer">{{ source.title|default:source.url }}</a>
+                                {% if source.published_date %}<span class="source-meta">Published {{ source.published_date|date:"M j, Y" }}</span>{% endif %}
+                                {% if source.note %}<span class="source-meta">{{ source.note }}</span>{% endif %}
+                            </div>
+                            <div class="source-actions">
+                                <a href="{% url 'content:source_edit' source.pk %}">Edit</a>
+                                <a href="{% url 'content:source_delete' source.pk %}">Remove</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="review-empty">No research sources have been attached to this content yet.</p>
+                {% endfor %}
+                <a href="{% url 'content:source_create' item.pk %}" class="source-add">+ ADD A RESEARCH SOURCE</a>
+            </section>
+
+            <section class="review-section-card">
+                <h2>Performance record</h2>
+                {% if performance_record %}
+                    <div class="performance-grid">
+                        <div class="performance-stat"><span>Reach</span><strong>{{ performance_record.reach }}</strong></div>
+                        <div class="performance-stat"><span>Views</span><strong>{{ performance_record.views }}</strong></div>
+                        <div class="performance-stat"><span>Likes</span><strong>{{ performance_record.likes }}</strong></div>
+                        <div class="performance-stat"><span>Comments</span><strong>{{ performance_record.comments }}</strong></div>
+                        <div class="performance-stat"><span>Shares</span><strong>{{ performance_record.shares }}</strong></div>
+                        <div class="performance-stat"><span>Engagement</span><strong>{{ performance_record.engagement_rate|floatformat:1 }}%</strong></div>
+                    </div>
+                    {% if performance_record.notes %}<p class="performance-notes">{{ performance_record.notes|linebreaks }}</p>{% endif %}
                 {% else %}
-                    <p class="muted">No draft text added yet.</p>
+                    <p class="review-empty">No performance data has been recorded for this content yet.</p>
                 {% endif %}
+                <a href="{% url 'content:performance_edit' item.pk %}" class="source-add">UPDATE PERFORMANCE RECORD →</a>
+            </section>
+        </main>
+
+        <aside class="review-rail">
+            <h2>Content details</h2>
+            <div class="rail-item"><span class="rail-label">Category</span><div class="rail-value">{{ item.category|default:"Uncategorised" }}</div></div>
+            <div class="rail-item"><span class="rail-label">Audience</span><div class="rail-value">{{ item.audience|default:"Not specified" }}</div></div>
+            <div class="rail-item"><span class="rail-label">Format</span><div class="rail-value">{{ item.get_content_format_display }}</div></div>
+            <div class="rail-item"><span class="rail-label">Platform</span><div class="rail-value">{{ item.get_platform_display }}</div></div>
+            <div class="rail-item"><span class="rail-label">Planned date</span><div class="rail-value">{{ item.planned_date|date:"F j, Y"|default:"Not scheduled" }}</div></div>
+            <div class="rail-item"><span class="rail-label">Last updated</span><div class="rail-value">{{ item.updated_at|date:"M j, Y · g:i A" }}</div></div>
+            {% if item.published_url %}<div class="rail-item"><span class="rail-label">Published content</span><div class="rail-value"><a href="{{ item.published_url }}" target="_blank" rel="noopener noreferrer">Open published post ↗</a></div></div>{% endif %}
+
+            <div class="rail-actions">
+                <a href="{% url 'content:item_edit' item.pk %}" class="rail-button primary">EDIT CONTENT</a>
+                <a href="{% url 'content:performance_edit' item.pk %}" class="rail-button secondary">UPDATE PERFORMANCE</a>
+                <a href="{% url 'content:item_delete' item.pk %}" class="rail-button secondary">MOVE TO RECYCLE BIN</a>
             </div>
-        </div>
-
-        <div class="section">
-            <h3>Caption</h3>
-
-            <div class="content">
-                {% if item.caption %}
-                    {{ item.caption|linebreaks }}
-                {% else %}
-                    <p class="muted">No caption added yet.</p>
-                {% endif %}
-            </div>
-        </div>
-
-        <div class="section">
-            <h3>Hashtags</h3>
-
-            <p class="content">
-                {{ item.hashtags|default:"No hashtags added yet." }}
-            </p>
-        </div>
-
-        <div class="section">
-            <h3>Production Notes</h3>
-
-            <div class="content">
-                {% if item.production_notes %}
-                    {{ item.production_notes|linebreaks }}
-                {% else %}
-                    <p class="muted">No production notes added yet.</p>
-                {% endif %}
-            </div>
-        </div>
+        </aside>
     </div>
-
-
-    <!-- Content Performance -->
-    <div class="card">
-        <h2>Content Performance</h2>
-
-        <p class="muted">
-            Track how this content performs after publication.
-        </p>
-
-        <a class="button performance-button"
-           href="{% url 'content:performance_edit' item.pk %}">
-            {% if item.performance %}
-                Update Performance
-            {% else %}
-                + Add Performance
-            {% endif %}
-        </a>
-
-        {% if item.performance %}
-            <div class="performance-grid">
-
-                <div>
-                    <strong>Reach</strong>
-                    <p class="performance-number">
-                        {{ item.performance.reach }}
-                    </p>
-                </div>
-
-                <div>
-                    <strong>Views</strong>
-                    <p class="performance-number">
-                        {{ item.performance.views }}
-                    </p>
-                </div>
-
-                <div>
-                    <strong>Likes</strong>
-                    <p class="performance-number">
-                        {{ item.performance.likes }}
-                    </p>
-                </div>
-
-                <div>
-                    <strong>Comments</strong>
-                    <p class="performance-number">
-                        {{ item.performance.comments }}
-                    </p>
-                </div>
-
-                <div>
-                    <strong>Shares</strong>
-                    <p class="performance-number">
-                        {{ item.performance.shares }}
-                    </p>
-                </div>
-
-                <div>
-                    <strong>Total Interactions</strong>
-                    <p class="performance-number">
-                        {{ item.performance.total_interactions }}
-                    </p>
-                </div>
-
-                <div>
-                    <strong>Engagement Rate</strong>
-                    <p class="performance-number">
-                        {{ item.performance.engagement_rate|floatformat:2 }}%
-                    </p>
-                </div>
-
-            </div>
-
-            {% if item.performance.notes %}
-                <div class="section">
-                    <h3>Performance Notes</h3>
-                    {{ item.performance.notes|linebreaks }}
-                </div>
-            {% endif %}
-
-        {% else %}
-            <p class="muted">
-                No performance statistics have been recorded yet.
-            </p>
-        {% endif %}
-    </div>
-
-
-    <!-- Source Links -->
-    <div class="card">
-        <h2>Source Links</h2>
-
-        <p class="muted">
-            Keep research articles, websites and reference materials
-            connected to this content item.
-        </p>
-
-        <a class="button add-source"
-           href="{% url 'content:source_create' item.pk %}">
-            + Add Source Link
-        </a>
-
-        {% for source in item.sources.all %}
-            <div class="source">
-
-                <strong>
-                    {{ source.title|default:source.url }}
-                </strong>
-
-                <p>
-                    <a href="{{ source.url }}"
-                       target="_blank"
-                       rel="noopener noreferrer">
-                        Open Source
-                    </a>
-                </p>
-
-                {% if source.published_date %}
-                    <p class="muted">
-                        Published: {{ source.published_date }}
-                    </p>
-                {% endif %}
-
-                {% if source.note %}
-                    <p>{{ source.note|linebreaks }}</p>
-                {% endif %}
-
-                <div class="source-actions">
-                    <a href="{% url 'content:source_edit' source.pk %}">
-                        Edit
-                    </a>
-
-                    <a class="remove"
-                       href="{% url 'content:source_delete' source.pk %}">
-                        Remove
-                    </a>
-                </div>
-
-            </div>
-
-        {% empty %}
-            <p class="muted">
-                No source links have been added yet.
-            </p>
-        {% endfor %}
-    </div>
-
-
-    <!-- Published Content -->
-    <div class="card">
-        <h2>Published Content</h2>
-
-        {% if item.published_url %}
-            <p>
-                <a href="{{ item.published_url }}"
-                   target="_blank"
-                   rel="noopener noreferrer">
-                    View Published Content
-                </a>
-            </p>
-        {% else %}
-            <p class="muted">
-                This content has not been published yet.
-            </p>
-        {% endif %}
-    </div>
-
-</body>
-</html>
+</div>
+{% endblock %}

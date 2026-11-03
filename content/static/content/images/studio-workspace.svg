@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="620" viewBox="0 0 1400 620" fill="none">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="620" gradientUnits="userSpaceOnUse"><stop stop-color="#111"/><stop offset=".58" stop-color="#28211B"/><stop offset="1" stop-color="#080808"/></linearGradient>
+ <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FF9A45"/><stop offset="1" stop-color="#FF5B00"/></linearGradient>
+ <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#555"/><stop offset=".45" stop-color="#161616"/><stop offset="1" stop-color="#080808"/></linearGradient>
+ <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#343C42"/><stop offset="1" stop-color="#101316"/></linearGradient>
+ <radialGradient id="lens"><stop stop-color="#B9D7D9"/><stop offset=".2" stop-color="#416C79"/><stop offset=".48" stop-color="#15222B"/><stop offset=".72" stop-color="#050607"/><stop offset="1" stop-color="#51565A"/></radialGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur stdDeviation="20"/></filter>
+</defs>
+<rect width="1400" height="620" rx="30" fill="url(#bg)"/>
+<circle cx="1130" cy="60" r="350" fill="#FF6500" opacity=".9"/><circle cx="1310" cy="530" r="290" fill="#D8FF24" opacity=".95"/>
+<circle cx="1130" cy="60" r="285" fill="#090909" opacity=".45"/>
+<ellipse cx="720" cy="535" rx="560" ry="52" fill="#000" opacity=".65" filter="url(#shadow)"/>
+<!-- desk --> <path d="M120 430H1310L1370 520H80L120 430Z" fill="#35271E"/><path d="M80 520H1370V548H80z" fill="#15110E"/><path d="M170 548h25v72h-25zm1070 0h25v72h-25z" fill="#171717"/>
+<!-- ring light --> <circle cx="1005" cy="160" r="91" stroke="#F4F1E8" stroke-width="17"/><circle cx="1005" cy="160" r="70" stroke="#FF9B42" stroke-width="3" opacity=".6"/><path d="M1005 251v163m-38 0h76" stroke="#777" stroke-width="10" stroke-linecap="round"/>
+<!-- plant --> <path d="M1220 335v-120m0 75c-65-6-82-42-88-83 45 2 79 22 88 83Zm0-34c-1-59 26-96 76-112 4 48-18 91-76 112Zm-2 10c42-53 82-58 120-44-20 41-62 61-120 44Z" fill="#7EA43A"/><path d="M1165 334h112l-13 92h-86z" fill="#B85A27"/>
+<!-- laptop --> <path d="M255 185q0-17 18-17h430q18 0 18 17v256H255V185Z" fill="#555"/><rect x="269" y="182" width="438" height="238" rx="9" fill="url(#screen)"/><rect x="291" y="204" width="395" height="196" rx="4" fill="#111820"/><path d="M323 350h110v-54h-110zm130 0h90v-90h-90zm110 0h83v-122h-83z" fill="#FF6500" opacity=".88"/><path d="M240 442h496l-42 29H280z" fill="#999"/><path d="M439 442h97l-8 10h-82z" fill="#444"/>
+<!-- camera body --> <path d="M790 340q0-31 35-31h233q35 0 35 31v109q0 24-28 24H817q-27 0-27-24V340Z" fill="url(#metal)" stroke="#777" stroke-width="5"/><path d="M847 309l26-34h98l28 34" fill="#2A2A2A" stroke="#777" stroke-width="4"/><circle cx="950" cy="391" r="78" fill="#080808" stroke="#777" stroke-width="7"/><circle cx="950" cy="391" r="62" fill="url(#lens)" stroke="#242424" stroke-width="7"/><circle cx="950" cy="391" r="25" fill="#07121B" opacity=".8"/><circle cx="930" cy="365" r="12" fill="#D7E9E7" opacity=".45"/><rect x="1057" y="350" width="29" height="11" rx="4" fill="#FF6500"/><rect x="811" y="326" width="44" height="9" rx="4" fill="#888"/>
+<!-- headphones --> <path d="M1175 400v-37q0-74 75-74t75 74v37" stroke="#141414" stroke-width="24" stroke-linecap="round"/><rect x="1160" y="365" width="42" height="85" rx="17" fill="#111" stroke="#555" stroke-width="5"/><rect x="1490" y="365" width="42" height="85" rx="17" fill="#111" stroke="#555" stroke-width="5" transform="translate(-215 0)"/>
+<!-- orange / lime highlights --> <path d="M110 468q210-95 410 0" stroke="#FF6500" stroke-width="6" opacity=".8"/><path d="M1110 510q100-50 215 0" stroke="#D8FF24" stroke-width="7" opacity=".9"/>
+</svg>

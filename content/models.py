@@ -1,3 +1,4 @@
+
 from django.db import models
 
 
@@ -13,6 +14,7 @@ class Category(models.Model):
 
 
 class ContentItem(models.Model):
+
     class Format(models.TextChoices):
         TEXT_POST = "text_post", "Text post"
         EDUCATIONAL = "educational", "Educational post"
@@ -30,6 +32,13 @@ class ContentItem(models.Model):
 
     class Platform(models.TextChoices):
         FACEBOOK = "facebook", "Facebook"
+        INSTAGRAM = "instagram", "Instagram"
+        TIKTOK = "tiktok", "TikTok"
+        YOUTUBE = "youtube", "YouTube"
+        X = "x", "X (Twitter)"
+        LINKEDIN = "linkedin", "LinkedIn"
+        WHATSAPP = "whatsapp", "WhatsApp"
+        THREADS = "threads", "Threads"
 
     title = models.CharField(max_length=200)
 
